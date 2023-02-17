@@ -46,12 +46,18 @@ app.post('/login', async(req, res) => {
       }
     }
   });
-
-  bcrypt.compare(req.body.passphrase, user[0].password, function(err, result) {
+  if(user[0] == null) {
+    res.json({success: false, message: 'Username or password invalid'});
+  } else {
+    bcrypt.compare(req.body.passphrase, user[0].password, function(err, result) {
       if ((result) && (req.body.username === user[0].username)) {
         req.session.user = req.body.username;
-      } 
-  });
+        res.json({success: true, message: 'Login success'});
+      } else {
+        res.json({success: false, message: 'Username or password invalid'});
+      }
+    });
+  }
 });
 
 app.post('/create_account', async(req, res) => {
@@ -66,14 +72,26 @@ app.post('/create_account', async(req, res) => {
     bcrypt.hash(req.body.passphrase, 10, function(err, hash) {
         User.create({username: req.body.username, password: hash});
     });
-  } 
+    res.json({success: true, message: 'Create success'});
+  } else {
+    res.json({success: false, message: 'Username or password invalid'});
+  }
+});
+
+app.get('/logout', async(req, res) => {
+  req.session.destroy();
+  res.send({
+    isLoggedIn: false,
+    });
 });
 
 /* Main app routes */
 app.get('/blog/home', async(req, res) => {
-    req.session.user = 'tlee';
     const post = await Post.findAll({where: {user: {[Op.eq]: req.session.user}},order:[['updatedAt','DESC']]});
-    res.send(post);
+    res.send({
+      posts: post,
+      isLoggedIn: !(req.session.user == null),
+      });
  });
 
 app.delete('/blog/home', async(req, res) => {
@@ -83,12 +101,18 @@ app.delete('/blog/home', async(req, res) => {
         }
       });
     const post = await Post.findAll({where: {user: {[Op.eq]: req.session.user}},order:[['updatedAt','DESC']]});
-    res.send(post);
+    res.send({
+      posts: post,
+      isLoggedIn: !(req.session.user == null),
+      });
 });
 
 app.post('/blog/newpost', async(req, res) => {
   const post = await Post.create({title:req.body.title, body: req.body.content, isPublished: req.body.isPublished, user: req.session.user});
-  res.send(post);
+  res.send({
+    post: post,
+    isLoggedIn: !(req.session.user == null),
+    });
 });
 
 app.post('/blog/editpost', async(req, res) => {
@@ -99,7 +123,10 @@ app.post('/blog/editpost', async(req, res) => {
         id: postID
         }
     });
-    res.send(post);
+    res.send({
+      post: post,
+      isLoggedIn: !(req.session.user == null),
+    });
 });
 
 const server = app.listen(3001, function() {
