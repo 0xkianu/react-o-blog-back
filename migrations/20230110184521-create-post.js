@@ -13,7 +13,7 @@ module.exports = {
         type: Sequelize.STRING
       },
       body: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING(4000)
       },
       category: {
         type: Sequelize.STRING
