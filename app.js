@@ -129,6 +129,23 @@ app.post('/blog/editpost', async(req, res) => {
     });
 });
 
+app.get('/blog/users', async(req, res) => {
+  const users = await User.findAll({order:[['username']]});
+    res.send({
+      users: users,
+      isLoggedIn: !(req.session.user == null),
+      });
+});
+
+app.get('/blog/users/:user', async(req, res) => {
+  const userName = req.params.user;
+  const post = await Post.findAll({where: {user: userName, isPublished: true},order:[['updatedAt','DESC']]});
+    res.send({
+      posts: post,
+      isLoggedIn: !(req.session.user == null),
+      });
+});
+
 const server = app.listen(3001, function() {
     console.log('listening on port 3001');
 });
