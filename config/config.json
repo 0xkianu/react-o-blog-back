@@ -3,21 +3,21 @@
     "username": "postgres",
     "password": "Arako200",
     "database": "blogAppDB",
-    "host": "127.0.0.1",
+    "host": "database-1.csktzom6uj0m.us-east-2.rds.amazonaws.com",
     "dialect": "postgres"
   },
   "test": {
     "username": "postgres",
     "password": "Arako200",
     "database": "blogAppDB",
-    "host": "127.0.0.1",
+    "host": "database-1.csktzom6uj0m.us-east-2.rds.amazonaws.com",
     "dialect": "postgres"
   },
   "production": {
     "username": "postgres",
     "password": "Arako200",
     "database": "blogAppDB",
-    "host": "127.0.0.1",
+    "host": "database-1.csktzom6uj0m.us-east-2.rds.amazonaws.com",
     "dialect": "postgres"
   }
 }
